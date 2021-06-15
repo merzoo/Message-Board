@@ -1,44 +1,46 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+
 const app = express()
 
-// 模板引擎配置
+// view engine
 app.set('view engine', 'ejs')
+// set views
 app.set('views', './templates')
-
-// 请求体解析中间件配置
+// body parse
 app.use(bodyParser())
 
-// 留言内容
+// database
 const messages = []
 
-// 首页路由
+// router
 app.get('/', (req, res) => {
-    console.log(11)
     res.render('index', {messages})
 })
 
-// 留言页路由
 app.route('/publish')
     .get((req, res) => {
         res.render('publish')
     })
     .post((req, res) => {
-        if(!req.body.name || !req.body.content) {
-            throw new Error('name and cotent is required!')
+        const { name, content } = req.body
+        // data check
+        if(!name || !content) {
+            throw new Error('name and content are required!')
         }
-        const now = (new Date()).toLocaleString()
         messages.push({
-            name: req.body.name,
-            content: req.body.content,
-            time: now // message event
+            name,
+            content,
+            time: (new Date()).toLocaleString()
         })
 
         res.redirect('/')
     })
 
 
-// 开启监听
+
+
+// listen ports
 app.listen(9000, () => {
-    console.log('listen on 9000')
+    console.log('app listen on 9000!')
 })
